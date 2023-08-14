@@ -1,77 +1,95 @@
 resource "aws_security_group" "default" {
-  count       = module.this.enabled && var.security_group_enabled ? 1 : 0
-  description = "Controls access to the ALB (HTTP/HTTPS)"
-  vpc_id      = var.vpc_id
-  name        = module.this.id
-  tags        = module.this.tags
+  count       = module.this.enabled && local.create_security_group ? 1 : 0
+  name        = var.security_group_name
+  description = var.security_group_description
+  vpc_id      = data.aws_vpc.default[0].id
+  tags        = var.security_group_tags
 }
 
-resource "aws_security_group_rule" "egress" {
-  count             = module.this.enabled && var.security_group_enabled ? 1 : 0
-  type              = "egress"
-  from_port         = "0"
-  to_port           = "0"
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = one(aws_security_group.default[*].id)
+resource "aws_security_group_rule" "default" {
+  for_each = local.create_security_group ? var.security_group_rules : {}
+
+  type              = each.value.type
+  description       = try(each.value.description, "")
+  from_port         = try(each.value.from_port, -1)
+  to_port           = try(each.value.to_port, -1)
+  protocol          = each.value.protocol
+  cidr_blocks       = each.value.cidr_blocks
+  security_group_id = var.create_security_group ? aws_security_group.default[0].id : data.aws_security_group.default[0].id
 }
 
-resource "aws_security_group_rule" "http_ingress" {
-  count             = module.this.enabled && var.security_group_enabled && var.http_enabled ? 1 : 0
-  type              = "ingress"
-  from_port         = var.http_port
-  to_port           = var.http_port
-  protocol          = "tcp"
-  cidr_blocks       = var.http_ingress_cidr_blocks
-  prefix_list_ids   = var.http_ingress_prefix_list_ids
-  security_group_id = one(aws_security_group.default[*].id)
-}
+# resource "aws_security_group" "default" {
+#   count       = module.this.enabled && var.security_group_enabled ? 1 : 0
+#   description = "Controls access to the ALB (HTTP/HTTPS)"
+#   vpc_id      = var.vpc_id
+#   name        = module.this.id
+#   tags        = module.this.tags
+# }
 
-resource "aws_security_group_rule" "https_ingress" {
-  count             = module.this.enabled && var.security_group_enabled && var.https_enabled ? 1 : 0
-  type              = "ingress"
-  from_port         = var.https_port
-  to_port           = var.https_port
-  protocol          = "tcp"
-  cidr_blocks       = var.https_ingress_cidr_blocks
-  prefix_list_ids   = var.https_ingress_prefix_list_ids
-  security_group_id = one(aws_security_group.default[*].id)
-}
+# resource "aws_security_group_rule" "egress" {
+#   count             = module.this.enabled && var.security_group_enabled ? 1 : 0
+#   type              = "egress"
+#   from_port         = "0"
+#   to_port           = "0"
+#   protocol          = "-1"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   security_group_id = one(aws_security_group.default[*].id)
+# }
 
-module "access_logs" {
-  source  = "cloudposse/lb-s3-bucket/aws"
-  version = "0.19.0"
+# resource "aws_security_group_rule" "http_ingress" {
+#   count             = module.this.enabled && var.security_group_enabled && var.http_enabled ? 1 : 0
+#   type              = "ingress"
+#   from_port         = var.http_port
+#   to_port           = var.http_port
+#   protocol          = "tcp"
+#   cidr_blocks       = var.http_ingress_cidr_blocks
+#   prefix_list_ids   = var.http_ingress_prefix_list_ids
+#   security_group_id = one(aws_security_group.default[*].id)
+# }
 
-  enabled = module.this.enabled && var.access_logs_enabled && var.access_logs_s3_bucket_id == null
+# resource "aws_security_group_rule" "https_ingress" {
+#   count             = module.this.enabled && var.security_group_enabled && var.https_enabled ? 1 : 0
+#   type              = "ingress"
+#   from_port         = var.https_port
+#   to_port           = var.https_port
+#   protocol          = "tcp"
+#   cidr_blocks       = var.https_ingress_cidr_blocks
+#   prefix_list_ids   = var.https_ingress_prefix_list_ids
+#   security_group_id = one(aws_security_group.default[*].id)
+# }
 
-  attributes = compact(concat(module.this.attributes, ["alb", "access", "logs"]))
+# module "access_logs" {
+#   source  = "cloudposse/lb-s3-bucket/aws"
+#   version = "0.19.0"
 
-  force_destroy                 = var.alb_access_logs_s3_bucket_force_destroy
-  lifecycle_configuration_rules = var.lifecycle_configuration_rules
+#   enabled = module.this.enabled && var.access_logs_enabled && var.access_logs_s3_bucket_id == null
 
-  lifecycle_rule_enabled             = var.lifecycle_rule_enabled
-  enable_glacier_transition          = var.enable_glacier_transition
-  expiration_days                    = var.expiration_days
-  glacier_transition_days            = var.glacier_transition_days
-  noncurrent_version_expiration_days = var.noncurrent_version_expiration_days
-  noncurrent_version_transition_days = var.noncurrent_version_transition_days
-  standard_transition_days           = var.standard_transition_days
+#   attributes = compact(concat(module.this.attributes, ["alb", "access", "logs"]))
 
-  context = module.this.context
-}
+#   force_destroy                 = var.alb_access_logs_s3_bucket_force_destroy
+#   lifecycle_configuration_rules = var.lifecycle_configuration_rules
 
-module "default_load_balancer_label" {
-  source          = "cloudposse/label/null"
-  version         = "0.25.0"
-  id_length_limit = var.load_balancer_name_max_length
-  context         = module.this.context
-}
+#   lifecycle_rule_enabled             = var.lifecycle_rule_enabled
+#   enable_glacier_transition          = var.enable_glacier_transition
+#   expiration_days                    = var.expiration_days
+#   glacier_transition_days            = var.glacier_transition_days
+#   noncurrent_version_expiration_days = var.noncurrent_version_expiration_days
+#   noncurrent_version_transition_days = var.noncurrent_version_transition_days
+#   standard_transition_days           = var.standard_transition_days
+
+#   context = module.this.context
+# }
+
+# module "default_load_balancer_label" {
+#   source          = "cloudposse/label/null"
+#   version         = "0.25.0"
+#   id_length_limit = var.load_balancer_name_max_length
+#   context         = module.this.context
+# }
 
 resource "aws_lb" "default" {
-  #bridgecrew:skip=BC_AWS_NETWORKING_41 - Skipping Ensure that ALB Drops HTTP Headers
-  #bridgecrew:skip=BC_AWS_LOGGING_22 - Skipping Ensure ELBv2 has Access Logging Enabled
   count              = module.this.enabled ? 1 : 0
-  name               = var.load_balancer_name == "" ? module.default_load_balancer_label.id : substr(var.load_balancer_name, 0, var.load_balancer_name_max_length)
+  name               = var.load_balancer_name == "" ? null : substr(var.load_balancer_name, 0, var.load_balancer_name_max_length)
   tags               = module.this.tags
   internal           = var.internal
   load_balancer_type = "application"
@@ -80,7 +98,7 @@ resource "aws_lb" "default" {
     concat(var.security_group_ids, [one(aws_security_group.default[*].id)]),
   )
 
-  subnets                          = var.subnet_ids
+  subnets                          = data.aws_subnet.default[*].id
   enable_cross_zone_load_balancing = var.cross_zone_load_balancing_enabled
   enable_http2                     = var.http2_enabled
   idle_timeout                     = var.idle_timeout
@@ -91,27 +109,27 @@ resource "aws_lb" "default" {
   xff_header_processing_mode       = var.xff_header_processing_mode
 
   access_logs {
-    bucket  = try(element(compact([var.access_logs_s3_bucket_id, module.access_logs.bucket_id]), 0), "")
+    bucket  = try(var.access_logs_s3_bucket_id, "")
     prefix  = var.access_logs_prefix
     enabled = var.access_logs_enabled
   }
 }
 
-module "default_target_group_label" {
-  source          = "cloudposse/label/null"
-  version         = "0.25.0"
-  attributes      = concat(module.this.attributes, ["default"])
-  id_length_limit = var.target_group_name_max_length
-  context         = module.this.context
-}
+# module "default_target_group_label" {
+#   source          = "cloudposse/label/null"
+#   version         = "0.25.0"
+#   attributes      = concat(module.this.attributes, ["default"])
+#   id_length_limit = var.target_group_name_max_length
+#   context         = module.this.context
+# }
 
 resource "aws_lb_target_group" "default" {
   count                         = module.this.enabled && var.default_target_group_enabled ? 1 : 0
-  name                          = var.target_group_name == "" ? module.default_target_group_label.id : substr(var.target_group_name, 0, var.target_group_name_max_length)
+  name                          = var.target_group_name == "" ? null : substr(var.target_group_name, 0, var.target_group_name_max_length)
   port                          = var.target_group_port
   protocol                      = var.target_group_protocol
   protocol_version              = var.target_group_protocol_version
-  vpc_id                        = var.vpc_id
+  vpc_id                        = data.aws_vpc.default[0].id
   target_type                   = var.target_group_target_type
   load_balancing_algorithm_type = var.load_balancing_algorithm_type
   deregistration_delay          = var.deregistration_delay
@@ -171,42 +189,42 @@ resource "aws_lb_listener" "http_forward" {
   }
 }
 
-resource "aws_lb_listener" "http_redirect" {
-  count             = module.this.enabled && var.http_enabled && var.http_redirect == true ? 1 : 0
+# resource "aws_lb_listener" "http_redirect" {
+#   count             = module.this.enabled && var.http_enabled && var.http_redirect == true ? 1 : 0
+#   load_balancer_arn = one(aws_lb.default[*].arn)
+#   port              = var.http_port
+#   protocol          = "HTTP"
+#   tags              = merge(module.this.tags, var.listener_additional_tags)
+
+#   default_action {
+#     target_group_arn = one(aws_lb_target_group.default[*].arn)
+#     type             = "redirect"
+
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
+
+resource "aws_lb_listener" "this" {
+  for_each = { for listener in var.aws_lb_listeners : listener.port => listener }
+
   load_balancer_arn = one(aws_lb.default[*].arn)
-  port              = var.http_port
-  protocol          = "HTTP"
-  tags              = merge(module.this.tags, var.listener_additional_tags)
+
+  port            = each.value.port
+  protocol        = each.value.protocol
+  ssl_policy      = each.value.protocol == "HTTPS" ? each.value.ssl_policy : null
+  certificate_arn = each.value.protocol == "HTTPS" ? data.aws_acm_certificate.main[each.value.certificate_name].arn : null
+  tags            = merge(module.this.tags, each.value.listener_additional_tags)
 
   default_action {
-    target_group_arn = one(aws_lb_target_group.default[*].arn)
-    type             = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-resource "aws_lb_listener" "https" {
-  #bridgecrew:skip=BC_AWS_GENERAL_43 - Skipping Ensure that load balancer is using TLS 1.2.
-  count             = module.this.enabled && var.https_enabled ? 1 : 0
-  load_balancer_arn = one(aws_lb.default[*].arn)
-
-  port            = var.https_port
-  protocol        = "HTTPS"
-  ssl_policy      = var.https_ssl_policy
-  certificate_arn = var.certificate_arn
-  tags            = merge(module.this.tags, var.listener_additional_tags)
-
-  default_action {
-    target_group_arn = var.listener_https_fixed_response != null ? null : one(aws_lb_target_group.default[*].arn)
-    type             = var.listener_https_fixed_response != null ? "fixed-response" : "forward"
+    target_group_arn = each.value.listener_fixed_response != null ? null : one(aws_lb_target_group.default[*].arn)
+    type             = each.value.listener_fixed_response != null ? "fixed-response" : "forward"
 
     dynamic "fixed_response" {
-      for_each = var.listener_https_fixed_response != null ? [var.listener_https_fixed_response] : []
+      for_each = each.value.listener_fixed_response != null ? [each.value.listener_fixed_response] : []
       content {
         content_type = fixed_response.value["content_type"]
         message_body = fixed_response.value["message_body"]
@@ -216,8 +234,14 @@ resource "aws_lb_listener" "https" {
   }
 }
 
+
 resource "aws_lb_listener_certificate" "https_sni" {
-  count           = module.this.enabled && var.https_enabled && length(var.additional_certs) > 0 ? length(var.additional_certs) : 0
-  listener_arn    = one(aws_lb_listener.https[*].arn)
-  certificate_arn = var.additional_certs[count.index]
+  for_each = {
+    for idx, listener in var.aws_lb_listeners :
+    idx => listener if listener.protocol == "HTTPS" && length(lookup(listener, "additional_cert_names", [])) > 0
+  }
+
+  listener_arn    = aws_lb_listener.this[each.key].arn
+  certificate_arn = [for cert_name in each.value.additional_cert_names : data.aws_acm_certificate.additional[cert_name].arn]
 }
+

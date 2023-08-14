@@ -1,12 +1,12 @@
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID to associate with ALB"
-}
+# variable "vpc_id" {
+#   type        = string
+#   description = "VPC ID to associate with ALB"
+# }
 
-variable "subnet_ids" {
-  type        = list(string)
-  description = "A list of subnet IDs to associate with ALB"
-}
+# variable "subnet_ids" {
+#   type        = list(string)
+#   description = "A list of subnet IDs to associate with ALB"
+# }
 
 variable "security_group_ids" {
   type        = list(string)
@@ -307,10 +307,10 @@ variable "additional_certs" {
   default     = []
 }
 
-variable "security_group_enabled" {
+variable "create_security_group" {
   type        = bool
   description = "Enables the security group"
-  default     = true
+  default     = false
 }
 
 variable "load_balancer_name" {
@@ -354,3 +354,65 @@ variable "xff_header_processing_mode" {
   default     = "append"
   description = "Determines how the load balancer modifies the X-Forwarded-For header in the HTTP request before sending the request to the target. The possible values are append, preserve, and remove. Only valid for Load Balancers of type application. The default is append"
 }
+
+variable "vpc_name" {
+  type        = string
+  description = "The name for the default vpc, uses a module label name if left empty"
+}
+
+variable "subnet_names" {
+  type        = list(string)
+  description = "The names for the default subnets, uses a module label name if left empty"
+}
+
+variable "security_group_name" {
+  type        = string
+  default     = null
+  description = "Name of the security group to be associated with the replication group"
+}
+
+variable "security_group_description" {
+  type        = string
+  default     = null
+  description = "Description of the security group to be associated with the replication group"
+}
+
+variable "security_group_tags" {
+  type        = map(string)
+  description = "Additional tags for the security group to create for the DocumentDB cluster"
+  default     = {}
+}
+
+variable "security_group_rules" {
+  description = "Map of security group rules"
+  type = map(object({
+    cidr_blocks = list(string)
+    protocol    = string
+    type        = string
+    description = optional(string)
+    from_port   = optional(number)
+    to_port     = optional(number)
+  }))
+}
+
+variable "security_group_names" {
+  description = "List of security group names"
+  type        = list(string)
+  default     = []
+}
+
+
+variable "aws_lb_listeners" {
+  description = "A list of listener configurations"
+  type = list(object({
+    port : number
+    protocol : string
+    ssl_policy : optional(string)
+    certificate_name : optional(string)
+    additional_cert_names : optional(list(string))
+    listener_fixed_response : optional(map(string))
+    listener_additional_tags : map(string)
+  }))
+  default = []
+}
+
