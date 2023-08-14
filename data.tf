@@ -10,7 +10,6 @@ locals {
   ])
 }
 
-
 data "aws_vpc" "default" {
   count = module.this.enabled && var.vpc_name != "" ? 1 : 0
   tags = {
@@ -46,5 +45,3 @@ data "aws_acm_certificate" "additional" {
   domain      = each.value.cert_name
   most_recent = true
 }
-
-

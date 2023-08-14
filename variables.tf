@@ -401,7 +401,6 @@ variable "security_group_names" {
   default     = []
 }
 
-
 variable "aws_lb_listeners" {
   description = "A list of listener configurations"
   type = list(object({

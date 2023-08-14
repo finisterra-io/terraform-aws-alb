@@ -123,71 +123,71 @@ resource "aws_lb" "default" {
 #   context         = module.this.context
 # }
 
-resource "aws_lb_target_group" "default" {
-  count                         = module.this.enabled && var.default_target_group_enabled ? 1 : 0
-  name                          = var.target_group_name == "" ? null : substr(var.target_group_name, 0, var.target_group_name_max_length)
-  port                          = var.target_group_port
-  protocol                      = var.target_group_protocol
-  protocol_version              = var.target_group_protocol_version
-  vpc_id                        = data.aws_vpc.default[0].id
-  target_type                   = var.target_group_target_type
-  load_balancing_algorithm_type = var.load_balancing_algorithm_type
-  deregistration_delay          = var.deregistration_delay
-  slow_start                    = var.slow_start
+# resource "aws_lb_target_group" "default" {
+#   count                         = module.this.enabled && var.default_target_group_enabled ? 1 : 0
+#   name                          = var.target_group_name == "" ? null : substr(var.target_group_name, 0, var.target_group_name_max_length)
+#   port                          = var.target_group_port
+#   protocol                      = var.target_group_protocol
+#   protocol_version              = var.target_group_protocol_version
+#   vpc_id                        = data.aws_vpc.default[0].id
+#   target_type                   = var.target_group_target_type
+#   load_balancing_algorithm_type = var.load_balancing_algorithm_type
+#   deregistration_delay          = var.deregistration_delay
+#   slow_start                    = var.slow_start
 
-  health_check {
-    protocol            = var.health_check_protocol != null ? var.health_check_protocol : var.target_group_protocol
-    path                = var.health_check_path
-    port                = var.health_check_port
-    timeout             = var.health_check_timeout
-    healthy_threshold   = var.health_check_healthy_threshold
-    unhealthy_threshold = var.health_check_unhealthy_threshold
-    interval            = var.health_check_interval
-    matcher             = var.health_check_matcher
-  }
+#   health_check {
+#     protocol            = var.health_check_protocol != null ? var.health_check_protocol : var.target_group_protocol
+#     path                = var.health_check_path
+#     port                = var.health_check_port
+#     timeout             = var.health_check_timeout
+#     healthy_threshold   = var.health_check_healthy_threshold
+#     unhealthy_threshold = var.health_check_unhealthy_threshold
+#     interval            = var.health_check_interval
+#     matcher             = var.health_check_matcher
+#   }
 
-  dynamic "stickiness" {
-    for_each = var.stickiness == null ? [] : [var.stickiness]
-    content {
-      type            = "lb_cookie"
-      cookie_duration = stickiness.value.cookie_duration
-      enabled         = var.target_group_protocol == "TCP" ? false : stickiness.value.enabled
-    }
-  }
+#   dynamic "stickiness" {
+#     for_each = var.stickiness == null ? [] : [var.stickiness]
+#     content {
+#       type            = "lb_cookie"
+#       cookie_duration = stickiness.value.cookie_duration
+#       enabled         = var.target_group_protocol == "TCP" ? false : stickiness.value.enabled
+#     }
+#   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
+#   lifecycle {
+#     create_before_destroy = true
+#   }
 
-  tags = merge(
-    module.default_target_group_label.tags,
-    var.target_group_additional_tags
-  )
-}
+#   tags = merge(
+#     module.default_target_group_label.tags,
+#     var.target_group_additional_tags
+#   )
+# }
 
-resource "aws_lb_listener" "http_forward" {
-  #bridgecrew:skip=BC_AWS_GENERAL_43 - Skipping Ensure that load balancer is using TLS 1.2.
-  #bridgecrew:skip=BC_AWS_NETWORKING_29 - Skipping Ensure ALB Protocol is HTTPS
-  count             = module.this.enabled && var.http_enabled && var.http_redirect != true ? 1 : 0
-  load_balancer_arn = one(aws_lb.default[*].arn)
-  port              = var.http_port
-  protocol          = "HTTP"
-  tags              = merge(module.this.tags, var.listener_additional_tags)
+# resource "aws_lb_listener" "http_forward" {
+#   #bridgecrew:skip=BC_AWS_GENERAL_43 - Skipping Ensure that load balancer is using TLS 1.2.
+#   #bridgecrew:skip=BC_AWS_NETWORKING_29 - Skipping Ensure ALB Protocol is HTTPS
+#   count             = module.this.enabled && var.http_enabled && var.http_redirect != true ? 1 : 0
+#   load_balancer_arn = one(aws_lb.default[*].arn)
+#   port              = var.http_port
+#   protocol          = "HTTP"
+#   tags              = merge(module.this.tags, var.listener_additional_tags)
 
-  default_action {
-    target_group_arn = var.listener_http_fixed_response != null ? null : one(aws_lb_target_group.default[*].arn)
-    type             = var.listener_http_fixed_response != null ? "fixed-response" : "forward"
+#   default_action {
+#     target_group_arn = var.listener_http_fixed_response != null ? null : one(aws_lb_target_group.default[*].arn)
+#     type             = var.listener_http_fixed_response != null ? "fixed-response" : "forward"
 
-    dynamic "fixed_response" {
-      for_each = var.listener_http_fixed_response != null ? [var.listener_http_fixed_response] : []
-      content {
-        content_type = fixed_response.value["content_type"]
-        message_body = fixed_response.value["message_body"]
-        status_code  = fixed_response.value["status_code"]
-      }
-    }
-  }
-}
+#     dynamic "fixed_response" {
+#       for_each = var.listener_http_fixed_response != null ? [var.listener_http_fixed_response] : []
+#       content {
+#         content_type = fixed_response.value["content_type"]
+#         message_body = fixed_response.value["message_body"]
+#         status_code  = fixed_response.value["status_code"]
+#       }
+#     }
+#   }
+# }
 
 # resource "aws_lb_listener" "http_redirect" {
 #   count             = module.this.enabled && var.http_enabled && var.http_redirect == true ? 1 : 0
@@ -233,7 +233,6 @@ resource "aws_lb_listener" "this" {
     }
   }
 }
-
 
 resource "aws_lb_listener_certificate" "https_sni" {
   for_each = {
