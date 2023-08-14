@@ -28,37 +28,37 @@ output "security_group_id" {
   value       = one(aws_security_group.default[*].id)
 }
 
-output "default_target_group_arn" {
-  description = "The default target group ARN"
-  value       = one(aws_lb_target_group.default[*].arn)
-}
+# output "default_target_group_arn" {
+#   description = "The default target group ARN"
+#   value       = one(aws_lb_target_group.default[*].arn)
+# }
 
-output "default_target_group_arn_suffix" {
-  description = "The default target group ARN suffix"
-  value       = one(aws_lb_target_group.default[*].arn_suffix)
-}
+# output "default_target_group_arn_suffix" {
+#   description = "The default target group ARN suffix"
+#   value       = one(aws_lb_target_group.default[*].arn_suffix)
+# }
 
-output "http_listener_arn" {
-  description = "The ARN of the HTTP forwarding listener"
-  value       = one(aws_lb_listener.http_forward[*].arn)
-}
+# output "http_listener_arn" {
+#   description = "The ARN of the HTTP forwarding listener"
+#   value       = one(aws_lb_listener.http_forward[*].arn)
+# }
 
-output "http_redirect_listener_arn" {
-  description = "The ARN of the HTTP to HTTPS redirect listener"
-  value       = one(aws_lb_listener.http_redirect[*].arn)
-}
+# output "http_redirect_listener_arn" {
+#   description = "The ARN of the HTTP to HTTPS redirect listener"
+#   value       = one(aws_lb_listener.http_redirect[*].arn)
+# }
 
-output "https_listener_arn" {
-  description = "The ARN of the HTTPS listener"
-  value       = one(aws_lb_listener.https[*].arn)
-}
+# output "https_listener_arn" {
+#   description = "The ARN of the HTTPS listener"
+#   value       = one(aws_lb_listener.https[*].arn)
+# }
 
-output "listener_arns" {
-  description = "A list of all the listener ARNs"
-  value = compact(
-    concat(aws_lb_listener.http_forward[*].arn, aws_lb_listener.http_redirect[*].arn, aws_lb_listener.https[*].arn)
-  )
-}
+# output "listener_arns" {
+#   description = "A list of all the listener ARNs"
+#   value = compact(
+#     concat(aws_lb_listener.http_forward[*].arn, aws_lb_listener.http_redirect[*].arn, aws_lb_listener.https[*].arn)
+#   )
+# }
 
 # output "access_logs_bucket_id" {
 #   description = "The S3 bucket ID for access logs"
