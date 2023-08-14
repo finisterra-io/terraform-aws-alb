@@ -369,6 +369,7 @@ variable "vpc_name" {
 variable "subnet_names" {
   type        = list(string)
   description = "The names for the default subnets, uses a module label name if left empty"
+  default     = null
 }
 
 variable "security_group_name" {
@@ -399,6 +400,7 @@ variable "security_group_rules" {
     from_port   = optional(number)
     to_port     = optional(number)
   }))
+  default = null
 }
 
 variable "aws_lb_listeners" {
