@@ -92,11 +92,12 @@ variable "https_ssl_policy" {
   default     = "ELBSecurityPolicy-2015-05"
 }
 
-variable "access_logs_bucket" {
+variable "access_logs" {
   type        = map(any)
   default     = {}
-  description = "The S3 log bucket name"
+  description = "A boolean flag to enable/disable access_logs"
 }
+
 
 # variable "access_logs_prefix" {
 #   type        = string
