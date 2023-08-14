@@ -110,7 +110,7 @@ resource "aws_lb" "default" {
   xff_header_processing_mode       = var.xff_header_processing_mode
 
   access_logs {
-    bucket  = try(var.access_logs_s3_bucket_id, "")
+    bucket  = var.access_logs_s3_bucket_id
     prefix  = var.access_logs_prefix
     enabled = var.access_logs_enabled
   }
