@@ -221,7 +221,7 @@ resource "aws_lb_listener" "this" {
   tags            = merge(module.this.tags, each.value.listener_additional_tags)
 
   default_action {
-    target_group_arn = each.value.listener_fixed_response != null ? null : one(aws_lb_target_group.default[*].arn)
+    target_group_arn = null
     type             = each.value.listener_fixed_response != null ? "fixed-response" : "forward"
 
     dynamic "fixed_response" {
