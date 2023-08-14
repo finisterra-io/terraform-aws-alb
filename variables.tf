@@ -92,23 +92,29 @@ variable "https_ssl_policy" {
   default     = "ELBSecurityPolicy-2015-05"
 }
 
-variable "access_logs_prefix" {
-  type        = string
-  default     = ""
-  description = "The S3 log bucket prefix"
+variable "access_logs_bucket" {
+  type        = map(any)
+  default     = {}
+  description = "The S3 log bucket name"
 }
 
-variable "access_logs_enabled" {
-  type        = bool
-  default     = true
-  description = "A boolean flag to enable/disable access_logs"
-}
+# variable "access_logs_prefix" {
+#   type        = string
+#   default     = ""
+#   description = "The S3 log bucket prefix"
+# }
 
-variable "access_logs_s3_bucket_id" {
-  type        = string
-  default     = null
-  description = "An external S3 Bucket name to store access logs in. If specified, no logging bucket will be created."
-}
+# variable "access_logs_enabled" {
+#   type        = bool
+#   default     = true
+#   description = "A boolean flag to enable/disable access_logs"
+# }
+
+# variable "access_logs_s3_bucket_id" {
+#   type        = string
+#   default     = ""
+#   description = "An external S3 Bucket name to store access logs in. If specified, no logging bucket will be created."
+# }
 
 variable "cross_zone_load_balancing_enabled" {
   type        = bool

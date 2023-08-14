@@ -109,11 +109,21 @@ resource "aws_lb" "default" {
   preserve_host_header             = var.preserve_host_header
   xff_header_processing_mode       = var.xff_header_processing_mode
 
-  access_logs {
-    bucket  = var.access_logs_s3_bucket_id
-    prefix  = var.access_logs_prefix
-    enabled = var.access_logs_enabled
+  dynamic "access_logs" {
+    for_each = length(var.access_logs) > 0 ? [var.access_logs] : []
+
+    content {
+      enabled = try(access_logs.value.enabled, try(access_logs.value.bucket, null) != null)
+      bucket  = try(access_logs.value.bucket, null)
+      prefix  = try(access_logs.value.prefix, null)
+    }
   }
+
+  # access_logs {
+  #   bucket  = var.access_logs_s3_bucket_id
+  #   prefix  = var.access_logs_prefix
+  #   enabled = var.access_logs_enabled
+  # }
 }
 
 # module "default_target_group_label" {
