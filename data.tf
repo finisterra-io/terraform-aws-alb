@@ -1,14 +1,3 @@
-locals {
-  flattened_certs = flatten([
-    for idx, listener in var.aws_lb_listeners :
-    [for cert_name in lookup(listener, "additional_cert_names", []) :
-      {
-        index     = idx
-        cert_name = cert_name
-      }
-    ]
-  ])
-}
 
 data "aws_vpc" "default" {
   count = module.this.enabled && var.vpc_name != "" ? 1 : 0
@@ -32,16 +21,16 @@ data "aws_security_group" "default" {
 }
 
 data "aws_acm_certificate" "main" {
-  for_each = { for listener in var.aws_lb_listeners : listener.certificate_name => listener if listener.certificate_name != null }
+  for_each = { for listener in var.aws_lb_listeners : listener.domain_name => listener if listener.domain_name != null }
 
   domain      = each.key # Assumes the name is the domain. Adjust if necessary.
   most_recent = true
 }
 
 data "aws_acm_certificate" "additional" {
-  for_each = { for item in local.flattened_certs : "${item.index}-${item.cert_name}" => item }
+  for_each = { for cert_name in var.aws_lb_listener_certificates : cert_name => cert_name }
 
-  domain      = each.value.cert_name
+  domain      = each.value
   most_recent = true
 }
 

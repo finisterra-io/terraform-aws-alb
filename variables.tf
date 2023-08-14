@@ -415,7 +415,7 @@ variable "aws_lb_listeners" {
     port : number
     protocol : string
     ssl_policy : optional(string)
-    certificate_name : optional(string)
+    domain_name : optional(string)
     additional_cert_names : optional(list(string))
     listener_fixed_response : optional(map(string))
     listener_additional_tags : map(string)
@@ -423,3 +423,8 @@ variable "aws_lb_listeners" {
   default = []
 }
 
+variable "aws_lb_listener_certificates" {
+  description = "A list of listener certificate configurations"
+  type        = list(any)
+  default     = []
+}
