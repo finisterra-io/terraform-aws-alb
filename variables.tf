@@ -8,10 +8,16 @@
 #   description = "A list of subnet IDs to associate with ALB"
 # }
 
-variable "security_group_ids" {
+# variable "security_group_ids" {
+#   type        = list(string)
+#   default     = []
+#   description = "A list of additional security group IDs to allow access to ALB"
+# }
+
+variable "security_group_names" {
   type        = list(string)
   default     = []
-  description = "A list of additional security group IDs to allow access to ALB"
+  description = "A list of additional security group names to allow access to ALB"
 }
 
 variable "internal" {

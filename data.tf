@@ -27,7 +27,7 @@ data "aws_subnet" "default" {
 }
 
 data "aws_security_group" "default" {
-  count = module.this.enabled && local.create_security_group == false ? 1 : 0
+  count = module.this.enabled && var.create_security_group == false ? 1 : 0
   name  = var.security_group_name
 }
 
@@ -38,10 +38,14 @@ data "aws_acm_certificate" "main" {
   most_recent = true
 }
 
-
 data "aws_acm_certificate" "additional" {
   for_each = { for item in local.flattened_certs : "${item.index}-${item.cert_name}" => item }
 
   domain      = each.value.cert_name
   most_recent = true
+}
+
+data "aws_security_group" "selected" {
+  count = length(var.security_group_names)
+  name  = var.security_group_names[count.index]
 }

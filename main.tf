@@ -95,8 +95,9 @@ resource "aws_lb" "default" {
   load_balancer_type = "application"
 
   security_groups = compact(
-    concat(var.security_group_ids, [one(aws_security_group.default[*].id)]),
+    concat([for sg in data.aws_security_group.selected : sg.id], [one(aws_security_group.default[*].id)]),
   )
+
 
   subnets                          = data.aws_subnet.default[*].id
   enable_cross_zone_load_balancing = var.cross_zone_load_balancing_enabled
