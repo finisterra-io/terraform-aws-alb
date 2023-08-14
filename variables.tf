@@ -401,12 +401,6 @@ variable "security_group_rules" {
   }))
 }
 
-variable "security_group_names" {
-  description = "List of security group names"
-  type        = list(string)
-  default     = []
-}
-
 variable "aws_lb_listeners" {
   description = "A list of listener configurations"
   type = list(object({
