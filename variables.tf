@@ -416,11 +416,12 @@ variable "aws_lb_listeners" {
     protocol : string
     ssl_policy : optional(string)
     domain_name : optional(string)
-    listener_fixed_response : optional(map(string))
+    listener_fixed_response : list(any)
     listener_additional_tags : map(string)
   }))
   default = []
 }
+
 
 variable "aws_lb_listener_certificates" {
   description = "A list of listener certificate configurations"
