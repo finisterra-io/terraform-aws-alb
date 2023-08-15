@@ -247,11 +247,11 @@ resource "aws_lb_listener" "this" {
 
 resource "aws_lb_listener_certificate" "https_sni" {
   for_each = {
-    for port, listener in var.aws_lb_listeners :
-    port => listener if listener.protocol == "HTTPS" && length(lookup(listener, "additional_domains", [])) > 0
+    for combo in local.listener_domain_combinations :
+    "${combo.port}-${combo.domain}" => combo
   }
 
-  listener_arn    = aws_lb_listener.this[each.key].arn
-  certificate_arn = [for domain in each.value.additional_domains : data.aws_acm_certificate.additional[domain].arn]
+  listener_arn    = aws_lb_listener.this[each.value.port].arn
+  certificate_arn = data.aws_acm_certificate.additional[each.value.domain].arn
 }
 

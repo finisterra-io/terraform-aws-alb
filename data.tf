@@ -30,12 +30,12 @@ data "aws_acm_certificate" "main" {
 }
 
 data "aws_acm_certificate" "additional" {
-  # Flatten the list of additional domains from all listener configurations
-  for_each = { for domain in flatten([for listener in values(var.aws_lb_listeners) : listener.additional_domains if listener.additional_domains != null]) : domain => domain }
+  for_each = toset(flatten([for listener in var.aws_lb_listeners : listener.additional_domains]))
 
   domain      = each.key
   most_recent = true
 }
+
 
 data "aws_security_group" "selected" {
   count = length(var.security_group_names)
