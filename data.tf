@@ -30,7 +30,7 @@ data "aws_acm_certificate" "main" {
 }
 
 data "aws_acm_certificate" "additional" {
-  for_each = toset(flatten([for listener in var.aws_lb_listeners : listener.additional_domains]))
+  for_each = toset(flatten([for listener in var.aws_lb_listeners : listener.acm_domain_name]))
 
   domain      = each.key
   most_recent = true
