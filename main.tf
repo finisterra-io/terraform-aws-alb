@@ -245,14 +245,13 @@ resource "aws_lb_listener" "this" {
   }
 }
 
-
 resource "aws_lb_listener_certificate" "https_sni" {
   for_each = {
-    for idx, listener in var.aws_lb_listeners :
-    idx => listener if listener.protocol == "HTTPS" && length(lookup(listener, "additional_cert_names", [])) > 0
+    for port, listener in var.aws_lb_listeners :
+    port => listener if listener.protocol == "HTTPS" && length(lookup(listener, "additional_domains", [])) > 0
   }
 
   listener_arn    = aws_lb_listener.this[each.key].arn
-  certificate_arn = [for cert_name in each.value.additional_cert_names : data.aws_acm_certificate.additional[cert_name].arn]
+  certificate_arn = [for domain in each.value.additional_domains : data.aws_acm_certificate.additional[domain].arn]
 }
 

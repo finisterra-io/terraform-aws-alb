@@ -30,9 +30,10 @@ data "aws_acm_certificate" "main" {
 }
 
 data "aws_acm_certificate" "additional" {
-  for_each = { for cert_name in var.aws_lb_listener_certificates : cert_name => cert_name }
+  # Flatten the list of additional domains from all listener configurations
+  for_each = { for domain in flatten([for listener in values(var.aws_lb_listeners) : listener.additional_domains if listener.additional_domains != null]) : domain => domain }
 
-  domain      = each.value
+  domain      = each.key
   most_recent = true
 }
 
