@@ -227,7 +227,7 @@ resource "aws_lb_listener" "this" {
   port            = each.value.port
   protocol        = each.value.protocol
   ssl_policy      = each.value.protocol == "HTTPS" ? each.value.ssl_policy : null
-  certificate_arn = each.value.protocol == "HTTPS" ? data.aws_acm_certificate.main[each.value.certificate_name].arn : null
+  certificate_arn = each.value.protocol == "HTTPS" ? data.aws_acm_certificate.main[each.value.domain_name].arn : null
   tags            = merge(module.this.tags, each.value.listener_additional_tags)
 
   default_action {
