@@ -410,16 +410,16 @@ variable "security_group_rules" {
 }
 
 variable "aws_lb_listeners" {
-  description = "A list of listener configurations"
-  type = list(object({
+  description = "A map of listener configurations where the key is the port number"
+  type = map(object({
     port : number
     protocol : string
     ssl_policy : optional(string)
     domain_name : optional(string)
-    listener_fixed_response : map(any)
+    listener_fixed_response : optional(map(any))
     listener_additional_tags : map(string)
   }))
-  default = []
+  default = {}
 }
 
 

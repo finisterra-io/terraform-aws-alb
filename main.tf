@@ -220,7 +220,7 @@ resource "aws_lb" "default" {
 # }
 
 resource "aws_lb_listener" "this" {
-  for_each = { for listener in var.aws_lb_listeners : listener.port => listener }
+  for_each = var.aws_lb_listeners
 
   load_balancer_arn = one(aws_lb.default[*].arn)
 
@@ -244,6 +244,7 @@ resource "aws_lb_listener" "this" {
     }
   }
 }
+
 
 resource "aws_lb_listener_certificate" "https_sni" {
   for_each = {
