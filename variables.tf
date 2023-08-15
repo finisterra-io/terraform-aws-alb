@@ -416,7 +416,6 @@ variable "aws_lb_listeners" {
     protocol : string
     ssl_policy : optional(string)
     domain_name : optional(string)
-    additional_cert_names : optional(list(string))
     listener_fixed_response : optional(map(string))
     listener_additional_tags : map(string)
   }))
