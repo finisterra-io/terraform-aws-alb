@@ -1,7 +1,7 @@
 locals {
   listener_domain_combinations = flatten([
     for port, listener in var.aws_lb_listeners :
-    [for domain in listener.acm_domain_name : {
+    [for domain in listener.all_acm_domains : {
       port   = port
       domain = domain
     }]
@@ -425,8 +425,8 @@ variable "aws_lb_listeners" {
     port : number
     protocol : string
     ssl_policy : optional(string)
-    domain_name : optional(string)
-    acm_domain_name : optional(list(string))
+    acm_domain_name : optional(string)
+    all_acm_domains : optional(list(string))
     listener_fixed_response : optional(map(any))
     listener_additional_tags : map(string)
   }))
