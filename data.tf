@@ -21,7 +21,9 @@ data "aws_security_group" "default" {
 }
 
 data "aws_acm_certificate" "main" {
-  for_each = { for listener in var.aws_lb_listeners : listener.domain_name => listener if listener.domain_name != null }
+  for_each = {
+    for listener in var.aws_lb_listeners : listener.domain_name => listener if listener.domain_name != null && listener.domain_name != ""
+  }
 
   domain      = each.key # Assumes the name is the domain. Adjust if necessary.
   most_recent = true
