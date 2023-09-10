@@ -2,7 +2,7 @@ resource "aws_security_group" "default" {
   count       = module.this.enabled && var.create_security_group ? 1 : 0
   name        = var.security_group_name
   description = var.security_group_description
-  vpc_id      = data.aws_vpc.default[0].id
+  vpc_id      = var.vpc_name != "" ? data.aws_vpc.default[0].id : var.vpc_id
   tags        = var.security_group_tags
 }
 
@@ -99,7 +99,7 @@ resource "aws_lb" "default" {
   )
 
 
-  subnets                          = data.aws_subnet.default[*].id
+  subnets                          = var.subnet_names != [] ? data.aws_subnet.default[*].id : var.subnet_ids
   enable_cross_zone_load_balancing = var.cross_zone_load_balancing_enabled
   enable_http2                     = var.http2_enabled
   idle_timeout                     = var.idle_timeout

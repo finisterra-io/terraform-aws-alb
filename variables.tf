@@ -8,15 +8,17 @@ locals {
   ])
 }
 
-# variable "vpc_id" {
-#   type        = string
-#   description = "VPC ID to associate with ALB"
-# }
+variable "vpc_id" {
+  type        = string
+  description = "VPC ID to associate with ALB"
+  default     = ""
+}
 
-# variable "subnet_ids" {
-#   type        = list(string)
-#   description = "A list of subnet IDs to associate with ALB"
-# }
+variable "subnet_ids" {
+  type        = list(string)
+  description = "A list of subnet IDs to associate with ALB"
+  default     = []
+}
 
 # variable "security_group_ids" {
 #   type        = list(string)
@@ -381,11 +383,13 @@ variable "xff_header_processing_mode" {
 variable "vpc_name" {
   type        = string
   description = "The name for the default vpc, uses a module label name if left empty"
+  default     = ""
 }
 
 variable "subnet_names" {
   type        = list(string)
   description = "The names for the default subnets, uses a module label name if left empty"
+  default     = []
 }
 
 variable "security_group_name" {
