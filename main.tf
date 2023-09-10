@@ -232,7 +232,8 @@ resource "aws_lb_listener" "this" {
 
   default_action {
     target_group_arn = null
-    type             = each.value.listener_fixed_response != {} ? "fixed-response" : "forward"
+    type             = length(each.value.listener_fixed_response) > 0 ? "fixed-response" : "redirect"
+
 
     dynamic "fixed_response" {
       for_each = each.value.listener_fixed_response != {} && lookup(each.value.listener_fixed_response, "content_type", null) != null && lookup(each.value.listener_fixed_response, "message_body", null) != null && lookup(each.value.listener_fixed_response, "status_code", null) != null ? [each.value.listener_fixed_response] : []
