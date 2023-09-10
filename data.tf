@@ -7,7 +7,7 @@ data "aws_vpc" "default" {
 }
 
 data "aws_subnet" "default" {
-  count  = module.this.enabled && var.subnet_names != [] ? length(var.subnet_names) : 0
+  count  = module.this.enabled && var.subnet_names != null ? length(var.subnet_names) : 0
   vpc_id = var.vpc_name != "" ? data.aws_vpc.default[0].id : var.vpc_id
   filter {
     name   = "tag:Name"

@@ -17,7 +17,7 @@ variable "vpc_id" {
 variable "subnet_ids" {
   type        = list(string)
   description = "A list of subnet IDs to associate with ALB"
-  default     = []
+  default     = null
 }
 
 # variable "security_group_ids" {
@@ -389,7 +389,7 @@ variable "vpc_name" {
 variable "subnet_names" {
   type        = list(string)
   description = "The names for the default subnets, uses a module label name if left empty"
-  default     = []
+  default     = null
 }
 
 variable "security_group_name" {
