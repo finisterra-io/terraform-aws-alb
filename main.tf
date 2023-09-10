@@ -244,6 +244,17 @@ resource "aws_lb_listener" "this" {
       }
     }
 
+    dynamic "redirect" {
+      for_each = length(each.value.listener_redirect) > 0 ? [each.value.listener_redirect] : []
+      content {
+        protocol    = redirect.value["protocol"]
+        port        = redirect.value["port"]
+        host        = redirect.value["host"]
+        path        = redirect.value["path"]
+        query       = lookup(redirect.value, "query", "")
+        status_code = redirect.value["status_code"]
+      }
+    }
   }
 }
 

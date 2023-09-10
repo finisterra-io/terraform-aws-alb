@@ -432,7 +432,7 @@ variable "aws_lb_listeners" {
     acm_domain_name : optional(string)
     all_acm_domains : optional(list(string))
     listener_fixed_response : optional(map(any))
-    redirect : optional(map(any))
+    listener_redirect : optional(map(any))
     listener_additional_tags : map(string)
   }))
   default = {}
