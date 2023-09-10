@@ -98,7 +98,6 @@ resource "aws_lb" "default" {
     concat([for sg in data.aws_security_group.selected : sg.id], [one(aws_security_group.default[*].id)]),
   )
 
-
   subnets                          = var.subnet_names != [] ? data.aws_subnet.default[*].id : var.subnet_ids
   enable_cross_zone_load_balancing = var.cross_zone_load_balancing_enabled
   enable_http2                     = var.http2_enabled

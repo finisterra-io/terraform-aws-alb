@@ -16,7 +16,7 @@ data "aws_subnet" "default" {
 }
 
 data "aws_security_group" "default" {
-  count = module.this.enabled && var.create_security_group == false ? 1 : 0
+  count = module.this.enabled && var.security_group_name != null && var.create_security_group == false ? 1 : 0
   name  = var.security_group_name
 }
 
