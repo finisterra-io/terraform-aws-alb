@@ -443,3 +443,8 @@ variable "aws_lb_listener_certificates" {
   type        = list(any)
   default     = []
 }
+
+variable "load_balancer_type" {
+  type        = string
+  description = "The type of load balancer to create. Possible values are `application` or `network`"
+}
