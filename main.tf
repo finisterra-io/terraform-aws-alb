@@ -234,7 +234,7 @@ resource "aws_lb_listener" "this" {
     type             = each.value.listener_fixed_response != null ? "fixed-response" : "forward"
 
     dynamic "fixed_response" {
-      for_each = each.value.listener_fixed_response != null ? [each.value.listener_fixed_response] : []
+      for_each = each.value.listener_fixed_response != {} ? [each.value.listener_fixed_response] : []
       content {
         content_type = fixed_response.value["content_type"]
         message_body = fixed_response.value["message_body"]
