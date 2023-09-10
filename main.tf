@@ -236,7 +236,7 @@ resource "aws_lb_listener" "this" {
 
 
     dynamic "fixed_response" {
-      for_each = each.value.listener_fixed_response != {} && lookup(each.value.listener_fixed_response, "content_type", null) != null && lookup(each.value.listener_fixed_response, "message_body", null) != null && lookup(each.value.listener_fixed_response, "status_code", null) != null ? [each.value.listener_fixed_response] : []
+      for_each = length(each.value.listener_fixed_response) > 0 ? [each.value.listener_fixed_response] : []
       content {
         content_type = fixed_response.value["content_type"]
         message_body = fixed_response.value["message_body"]
