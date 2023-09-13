@@ -1,13 +1,13 @@
 
 data "aws_vpc" "default" {
-  count = module.this.enabled && var.vpc_name != "" ? 1 : 0
+  count = var.enabled && var.vpc_name != "" ? 1 : 0
   tags = {
     Name = var.vpc_name
   }
 }
 
 data "aws_subnet" "default" {
-  count  = module.this.enabled && var.subnet_names != null ? length(var.subnet_names) : 0
+  count  = var.enabled && var.subnet_names != null ? length(var.subnet_names) : 0
   vpc_id = var.vpc_name != "" ? data.aws_vpc.default[0].id : var.vpc_id
   filter {
     name   = "tag:Name"
@@ -16,7 +16,7 @@ data "aws_subnet" "default" {
 }
 
 data "aws_security_group" "default" {
-  count = module.this.enabled && var.security_group_name != null && var.create_security_group == false ? 1 : 0
+  count = var.enabled && var.security_group_name != null && var.create_security_group == false ? 1 : 0
   name  = var.security_group_name
 }
 
