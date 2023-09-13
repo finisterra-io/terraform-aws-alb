@@ -1,9 +1,9 @@
 locals {
   listener_domain_combinations = flatten([
     for port, listener in var.aws_lb_listeners :
-    [for domain in listener.all_acm_domains : {
-      port   = port
-      domain = domain
+    [for certificate in listener.additional_certificates : {
+      port        = port
+      certificate = certificate
     }]
   ])
 }

@@ -20,14 +20,6 @@ data "aws_security_group" "default" {
   name  = var.security_group_name
 }
 
-data "aws_acm_certificate" "additional" {
-  for_each = toset(flatten([for listener in var.aws_lb_listeners : listener.all_acm_domains]))
-
-  domain      = each.key
-  most_recent = true
-}
-
-
 data "aws_security_group" "selected" {
   count = length(var.security_group_names)
   name  = var.security_group_names[count.index]
