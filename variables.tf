@@ -166,7 +166,7 @@ variable "aws_lb_listeners" {
     port : number
     protocol : string
     ssl_policy : optional(string)
-    acm_domain_name : optional(string)
+    certificate_arn : optional(string)
     all_acm_domains : optional(list(string))
     listener_fixed_response : optional(map(any))
     listener_redirect : optional(map(any))
@@ -179,4 +179,3 @@ variable "load_balancer_type" {
   type        = string
   description = "The type of load balancer to create. Possible values are `application` or `network`"
 }
-

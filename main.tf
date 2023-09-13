@@ -52,7 +52,6 @@ resource "aws_lb" "default" {
 
 }
 
-
 resource "aws_lb_listener" "this" {
   for_each = var.aws_lb_listeners
 
@@ -61,7 +60,7 @@ resource "aws_lb_listener" "this" {
   port            = each.value.port
   protocol        = each.value.protocol
   ssl_policy      = each.value.protocol == "HTTPS" ? each.value.ssl_policy : null
-  certificate_arn = each.value.protocol == "HTTPS" ? data.aws_acm_certificate.main[each.value.acm_domain_name].arn : null
+  certificate_arn = each.value.certificate_arn
   tags            = merge(var.tags, each.value.listener_additional_tags)
 
   default_action {

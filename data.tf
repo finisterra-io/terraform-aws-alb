@@ -20,15 +20,6 @@ data "aws_security_group" "default" {
   name  = var.security_group_name
 }
 
-data "aws_acm_certificate" "main" {
-  for_each = {
-    for listener in var.aws_lb_listeners : listener.acm_domain_name => listener if listener.acm_domain_name != null && listener.acm_domain_name != ""
-  }
-
-  domain      = each.key # Assumes the name is the domain. Adjust if necessary.
-  most_recent = true
-}
-
 data "aws_acm_certificate" "additional" {
   for_each = toset(flatten([for listener in var.aws_lb_listeners : listener.all_acm_domains]))
 
