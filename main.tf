@@ -94,10 +94,10 @@ resource "aws_lb_listener" "this" {
 resource "aws_lb_listener_certificate" "https_sni" {
   for_each = {
     for combo in local.listener_domain_combinations :
-    "${combo.port}-${combo.certificate}" => combo
+    "${combo.port}-${combo.domain_name}" => combo
   }
 
   listener_arn    = aws_lb_listener.this[each.value.port].arn
-  certificate_arn = each.value.certificate
+  certificate_arn = each.value.certificate_arn
 }
 
