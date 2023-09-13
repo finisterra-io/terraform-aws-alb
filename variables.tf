@@ -168,13 +168,21 @@ variable "aws_lb_listeners" {
     protocol : string
     ssl_policy : optional(string)
     certificate_arn : optional(string)
-    additional_certificates : optional(list(any))
-    listener_fixed_response : optional(map(any))
-    listener_redirect : optional(map(any))
-    listener_additional_tags : map(string)
+    additional_certificates : optional(list(object({
+      certificate_arn : string
+      domain_name : string
+    })))
+    listener_fixed_response : optional(object({
+      content_type : string
+      message_body : string
+      status_code : string
+    }))
+    listener_redirect : optional(map(string))
+    listener_additional_tags : optional(map(string))
   }))
   default = {}
 }
+
 
 variable "load_balancer_type" {
   type        = string
