@@ -167,7 +167,7 @@ variable "aws_lb_listeners" {
     protocol : string
     ssl_policy : optional(string)
     certificate_arn : optional(string)
-    all_acm_domains : optional(list(string))
+    additional_certificates : optional(list(string))
     listener_fixed_response : optional(map(any))
     listener_redirect : optional(map(any))
     listener_additional_tags : map(string)
