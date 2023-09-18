@@ -173,16 +173,15 @@ variable "aws_lb_listeners" {
       domain_name : string
     })))
     listener_fixed_response : optional(object({
-      content_type : string
-      message_body : string
-      status_code : string
+      content_type : string = "text/plain"
+      message_body : string = "Default message body"
+      status_code : string = "200"
     }))
     listener_redirect : optional(map(string))
     listener_additional_tags : optional(map(string))
   }))
   default = {}
 }
-
 
 variable "load_balancer_type" {
   type        = string
