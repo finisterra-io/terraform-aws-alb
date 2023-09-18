@@ -173,9 +173,9 @@ variable "aws_lb_listeners" {
       domain_name : string
     })))
     listener_fixed_response : optional(object({
-      content_type : string = "text/plain"
-      message_body : string = "This is a default response"
-      status_code : string = "200"
+      content_type : string
+      message_body : string
+      status_code : string
     }))
     listener_redirect : optional(map(string))
     listener_additional_tags : optional(map(string))
