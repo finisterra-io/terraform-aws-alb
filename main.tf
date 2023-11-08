@@ -61,7 +61,7 @@ resource "aws_lb_listener" "this" {
   protocol        = each.value.protocol
   ssl_policy      = each.value.protocol == "HTTPS" ? each.value.ssl_policy : null
   certificate_arn = each.value.certificate_arn
-  tags            = merge(var.tags, each.value.listener_additional_tags)
+  tags            = each.value.listener_additional_tags
 
   default_action {
     target_group_arn = null
