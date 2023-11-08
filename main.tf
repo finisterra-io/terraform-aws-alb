@@ -19,11 +19,12 @@ resource "aws_security_group_rule" "default" {
 }
 
 resource "aws_lb" "default" {
-  count              = var.enabled ? 1 : 0
-  name               = var.load_balancer_name == "" ? null : substr(var.load_balancer_name, 0, var.load_balancer_name_max_length)
-  tags               = var.tags
-  internal           = var.internal
-  load_balancer_type = var.load_balancer_type
+  count                  = var.enabled ? 1 : 0
+  name                   = var.load_balancer_name == "" ? null : substr(var.load_balancer_name, 0, var.load_balancer_name_max_length)
+  tags                   = var.tags
+  internal               = var.internal
+  load_balancer_type     = var.load_balancer_type
+  enable_xff_client_port = var.enable_xff_client_port
 
   security_groups = compact(
     concat([for sg in data.aws_security_group.selected : sg.id], [one(aws_security_group.default[*].id)]),

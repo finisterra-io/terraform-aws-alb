@@ -187,3 +187,9 @@ variable "load_balancer_type" {
   type        = string
   description = "The type of load balancer to create. Possible values are `application` or `network`"
 }
+
+variable "enable_xff_client_port" {
+  type        = bool
+  default     = null
+  description = "Enables the X-Forwarded-For, X-Forwarded-Proto, and X-Forwarded-Port headers"
+}
