@@ -67,10 +67,8 @@ resource "aws_lb_listener" "this" {
     target_group_arn = null
     type             = length(each.value.listener_fixed_response) > 0 ? "fixed-response" : "redirect"
 
-
     dynamic "fixed_response" {
-      # for_each = length(each.value.listener_fixed_response) > 0 ? [each.value.listener_fixed_response] : []
-      for_each = []
+      for_each = length(each.value.listener_fixed_response) > 0 ? each.value.listener_fixed_response : []
       content {
         content_type = fixed_response.value["content_type"]
         message_body = fixed_response.value["message_body"]
@@ -79,7 +77,7 @@ resource "aws_lb_listener" "this" {
     }
 
     dynamic "redirect" {
-      for_each = length(each.value.listener_redirect) > 0 ? [each.value.listener_redirect] : []
+      for_each = length(each.value.listener_redirect) > 0 ? each.value.listener_redirect : []
       content {
         protocol    = redirect.value["protocol"]
         port        = redirect.value["port"]
