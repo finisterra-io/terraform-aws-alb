@@ -125,7 +125,7 @@ variable "vpc_name" {
 }
 
 variable "subnet_names" {
-  type        = list(string)
+  type        = list(any)
   description = "The names for the default subnets, uses a module label name if left empty"
   default     = null
 }
